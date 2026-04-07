@@ -43,7 +43,7 @@ h2 {
   z-index: 1;
 }
 .item select {
-  color:#a335ee; /* purple letters in dropdown */
+  color:#ffffff; /* purple letters in dropdown */
   position: relative;
   z-index: 1;
 }
@@ -52,10 +52,10 @@ h2 {
   content: "";
   position: absolute;
   top: 50%;
-  left: 30%; /* start from middle */
+  left: 30%; /* start from middle of screen */
   right: 0;
-  height: 1px;
-  background: #ffffff; /* white line */
+  height: 0; /* height must be 0 when using border-top */
+  border-top: 1px dashed #ffffff; /* or use 'dotted' */
   z-index: 0;
 }
 select, input {
