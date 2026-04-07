@@ -6,21 +6,76 @@
 <title>Karazhan BiS Tracker</title>
 <script src="https://wow.zamimg.com/widgets/power.js"></script>
 <style>
-body { font-family: Arial; background:#0f0f0f; color:#fff; padding:20px; }
-.container { max-width:1100px; margin:auto; background:#111; padding:20px; border-radius:10px; box-shadow:0 0 20px rgba(255,255,255,0.1);} 
-h1 { text-align:center; color:#ffd100; }
-h2 { color:#ffcc00; border-bottom:1px solid #333; margin-top:20px; }
+body {
+  font-family: Arial;
+  background:#0f0f0f;
+  color:#a335ee; /* purple letters */
+  padding:20px;
+}
+.container {
+  max-width:1100px;
+  margin:auto;
+  background:#111;
+  padding:20px;
+  border-radius:10px;
+  box-shadow:0 0 20px rgba(255,255,255,0.1);
+}
+h1 {
+  text-align:center;
+  color:#ffd100;
+}
+h2 {
+  color:#ffcc00;
+  border-bottom:1px solid #333;
+  margin-top:20px;
+}
 .boss { margin-top:20px; }
-.item { display:flex; justify-content:space-between; margin:4px 0; }
-a { text-decoration:none; color:#a335ee; }
-select, input { background:#1a1a1a; color:#fff; border:1px solid #555; padding:6px; }
-button { width:100%; padding:12px; background:#2e2605; color:#ffd100; border:1px solid #a3861a; cursor:pointer; margin-top:10px; }
+.item {
+  display: flex;
+  justify-content: space-between;
+  margin: 6px 0;
+  position: relative;
+  padding: 4px 0;
+}
+.item a {
+  color:#a335ee; /* purple item names */
+  position: relative;
+  z-index: 1;
+}
+.item select {
+  color:#a335ee; /* purple letters in dropdown */
+  position: relative;
+  z-index: 1;
+}
+/* connector line starting from middle of screen */
+.item::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 30%; /* start from middle */
+  right: 0;
+  height: 1px;
+  background: #ffffff; /* white line */
+  z-index: 0;
+}
+select, input {
+  background:#1a1a1a;
+  border:1px solid #555;
+  padding:6px;
+}
+button {
+  width:100%;
+  padding:12px;
+  background:#2e2605;
+  color:#ffd100;
+  border:1px solid #a3861a;
+  cursor:pointer;
+  margin-top:10px;
+}
 .other-input { margin-top:10px; }
 </style>
 </head>
-<body>
-
-<div class="container">
+<body><div class="container">
 <h1>Karazhan Phase 1 BiS Tracker</h1>
 <input id="playerName" placeholder="Character Name">
 <div id="loot"></div>
@@ -34,6 +89,7 @@ button { width:100%; padding:12px; background:#2e2605; color:#ffd100; border:1px
 <option>Off-spec</option>
 </select>
 </div>
+
 
 <button onclick="submitData()">Submit</button>
 </div>
