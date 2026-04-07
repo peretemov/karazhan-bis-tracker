@@ -156,7 +156,7 @@ function submitData(){
  const otherName=document.getElementById('otherItem').value;
  const otherStatus=document.getElementById('otherStatus').value;
  if(otherName && otherStatus){ data.push({item:otherName,status:otherStatus}); }
- fetch('https://script.google.com/macros/s/AKfycbw5gBNNl4tbidIaslYKV4XpRMU5mEW0otR1MSDHalCnIMvDMYAmFG0h9vkPTWAEZsvAlQ/exec',{ method:'POST', body:JSON.stringify({name,items:data}) });
+ fetch('https://script.google.com/macros/s/AKfycby18UY1o2uvRgqLfV4HF9GfWx51XBdrKb9YpuVXm1LGT6Cbv1LQ8r4yGIt9VOk0rGlY1w/exec',{ method:'POST', body:JSON.stringify({name,items:data}) });
  alert('Submitted');
 }
 </script>
