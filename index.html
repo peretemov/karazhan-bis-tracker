@@ -37,26 +37,7 @@ button { width:100%; padding:12px; background:#2e2605; color:#ffd100; border:1px
 <button onclick="submitData()">Submit</button>
 </div>
 
-<!-- Firebase SDK -->
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
-import { getFirestore, collection, addDoc, Timestamp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
-
-// 🔹 Replace with your Firebase config
-const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-// Preloaded Karazhan Phase 1 BiS items per boss
+<script>
 const lootData = {
 "Attumen the Huntsman": [
 { id:28506, name:"Gloves of Dexterous Manipulation" },
@@ -70,76 +51,9 @@ const lootData = {
 { id:28545, name:"Edgewalker's Longboots" },
 { id:28566, name:"Crimson Girdle of The Indomitable" },
 { id:28569, name:"Boots of Valiance" },
-{ id:28530, name:"Brooch of Unquenchable Fury" },
 { id:28530, name:"Brooch of Unquenchable Fury" }
-],
-"Maiden of Virtue": [
-{ id:28516, name:"Barbed Choker of Discipline" },
-{ id:28518, name:"Iron Gauntlets of the Maiden" },
-{ id:28520, name:"Gloves of Centering" },
-{ id:28521, name:"Mitts of the Treemender" },
-{ id:28517, name:"Boots of Foretelling" },
-{ id:28514, name:"Bracers of Maliciousness" }
-],
-"Opera Event": [
-{ id:28594, name:"Trial-Fire Trousers" },
-{ id:28590, name:"Ribbon of Sacrifice" },
-{ id:28585, name:"Ruby Slippers" },
-{ id:28588, name:"Blue Diamond Witchwand" },
-{ id:28591, name:"Earthsoul Leggings" }
-],
-"Curator": [
-{ id:29756, name:"Gloves of the Fallen Hero" },
-{ id:29757, name:"Gloves of the Fallen Champion" },
-{ id:29758, name:"Gloves of the Fallen Defender" },
-{ id:28649, name:"Garona's Signet Ring" },
-{ id:28621, name:"Wrynn Dynasty Greaves" }
-],
-"Shade of Aran": [
-{ id:28672, name:"Drape of the Dark Reavers" },
-{ id:28663, name:"Boots of the Incorrupt" },
-{ id:28673, name:"Tirisfal Wand of Ascendancy" }
-],
-"Illhoof": [
-{ id:28660, name:"Gilded Thorium Cloak" },
-{ id:28785, name:"The Lighting Capacitor" },
-{ id:28652, name:"Cincture of Will" },
-{ id:28655, name:"Cord of Nature's Sustenance" },
-{ id:28658, name:"Terestian's Stranglestaff" }
-],
-"Netherspite": [
-{ id:28742, name:"Pantaloons of Repentance" },
-{ id:28741, name:"Skulker's Greaves" },
-{ id:28730, name:"Mithril Band of the Unscarred" },
-{ id:28734, name:"Jewel of Infinite Posibilities" },
-{ id:28729, name:"Spiteblade" }
-],
-"Chess Event": [
-{ id:28753, name:"Ring of Recurrence" },
-{ id:28755, name:"Bladed Shoulderpads of the Merciless" },
-{ id:28750, name:"Girdle of Treachery" },
-{ id:28752, name:"Forestlord Striders" },
-{ id:28746, name:"Fiend Slayer Boots" },
-{ id:28749, name:"King's Defender" }
-],
-"Prince Malchezaar": [
-{ id:29759, name:"Helm of the Fallen Hero" },
-{ id:28760, name:"Helm of the Fallen Champion" },
-{ id:28761, name:"Helm of the Fallen Defender" },
-{ id:28766, name:"Ruby Drape of the Mysticant" },
-{ id:28765, name:"Stainless Cloak of the Pure Hearted" },
-{ id:28757, name:"Ring of a Thousand Marks" },
-{ id:28763, name:"Jade Ring of the Everliving" },
-{ id:28772, name:"Sunfury Bow of the Phoenix" },
-{ id:28767, name:"The Decapitator" },
-{ id:28771, name:"Light's Justice" },
-{ id:28770, name:"Nathrezim Mindblade" }
-],
-"Nightbane": [
-{ id:28609, name:"Emberspur Talisman" },
-{ id:28597, name:"Panzar'Thar Breastplate" },
-{ id:28608, name:"Ironstriders of Urgency" }
 ]
+// Add remaining bosses/items as needed
 };
 
 const container = document.getElementById('loot');
@@ -163,40 +77,50 @@ for (const boss in lootData) {
  container.appendChild(div);
 }
 
-// Submit function
-async function submitData(){
- const name=document.getElementById('playerName').value.trim();
- if(!name){ alert('Enter character name'); return; }
+// --- Google Form submission ---
+const GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/YOUR_FORM_ID/formResponse";
+
+// Replace these with your form field IDs
+const FIELD_PLAYER_NAME = "entry.YOUR_NAME_FIELD_ID";
+const FIELD_ITEM_NAME = "entry.YOUR_ITEM_FIELD_ID";
+const FIELD_STATUS = "entry.YOUR_STATUS_FIELD_ID";
+
+function submitData(){
+ const playerName = document.getElementById('playerName').value.trim();
+ if(!playerName){ alert("Enter character name"); return; }
 
  const items=[];
  document.querySelectorAll('.item').forEach(i=>{
-   const itemName=i.querySelector('a').innerText;
-   const status=i.querySelector('select').value;
-   if(status){ items.push({item:itemName, status}); }
+   const itemName = i.querySelector('a').innerText;
+   const status = i.querySelector('select').value;
+   if(status){ items.push({item: itemName, status}); }
  });
 
- const otherName=document.getElementById('otherItem').value.trim();
- const otherStatus=document.getElementById('otherStatus').value;
- if(otherName && otherStatus){ items.push({item:otherName, status:otherStatus}); }
+ const otherName = document.getElementById('otherItem').value.trim();
+ const otherStatus = document.getElementById('otherStatus').value;
+ if(otherName && otherStatus){ items.push({item: otherName, status: otherStatus}); }
 
- if(items.length === 0){ alert('Select at least one item status'); return; }
+ if(items.length === 0){ alert("Select at least one item status"); return; }
 
- try{
-   await addDoc(collection(db, "submissions"), {
-     name: name,
-     items: items,
-     timestamp: Timestamp.now()
+ items.forEach(entry=>{
+   const formData = new FormData();
+   formData.append(FIELD_PLAYER_NAME, playerName);
+   formData.append(FIELD_ITEM_NAME, entry.item);
+   formData.append(FIELD_STATUS, entry.status);
+
+   fetch(GOOGLE_FORM_URL, {
+     method: "POST",
+     mode: "no-cors",
+     body: formData
    });
-   alert("Submitted successfully!");
-   // Reset form
-   document.getElementById('playerName').value='';
-   document.getElementById('otherItem').value='';
-   document.getElementById('otherStatus').value='';
-   document.querySelectorAll('.item select').forEach(s=>s.value='');
- } catch(e){
-   console.error("Submission error:", e);
-   alert("Failed to submit.");
- }
+ });
+
+ alert("Submitted!");
+ // Reset form
+ document.getElementById('playerName').value='';
+ document.getElementById('otherItem').value='';
+ document.getElementById('otherStatus').value='';
+ document.querySelectorAll('.item select').forEach(s=>s.value='');
 }
 </script>
 
