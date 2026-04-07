@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Karazhan BiS Tracker</title>
-<script src="https://wow.zamimg.com/widgets/power.js"></script>
 <style>
 body { font-family: Arial; background:#0f0f0f; color:#fff; padding:20px; }
 .container { max-width:1100px; margin:auto; background:#111; padding:20px; border-radius:10px; box-shadow:0 0 20px rgba(255,255,255,0.1);} 
@@ -19,10 +18,12 @@ button { width:100%; padding:12px; background:#2e2605; color:#ffd100; border:1px
 </style>
 </head>
 <body>
+
 <div class="container">
 <h1>Karazhan Phase 1 BiS Tracker</h1>
 <input id="playerName" placeholder="Character Name">
 <div id="loot"></div>
+
 <div class="other-input">
 <input id="otherItem" placeholder="Other BiS item not listed">
 <select id="otherStatus">
@@ -32,10 +33,29 @@ button { width:100%; padding:12px; background:#2e2605; color:#ffd100; border:1px
 <option>Off-spec</option>
 </select>
 </div>
+
 <button onclick="submitData()">Submit</button>
 </div>
 
-<script>
+<!-- Firebase SDK -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
+import { getFirestore, collection, addDoc, Timestamp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+
+// 🔹 Replace with your Firebase config
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT_ID.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
 // Preloaded Karazhan Phase 1 BiS items per boss
 const lootData = {
 "Attumen the Huntsman": [
@@ -131,7 +151,7 @@ for (const boss in lootData) {
    const el=document.createElement('div');
    el.className='item';
    el.innerHTML=`
-     <a class="epic" href="https://www.wowhead.com/tbc/item=${item.id}" data-wowhead="item=${item.id}" target="_blank">${item.name}</a>
+     <a href="https://www.wowhead.com/tbc/item=${item.id}" target="_blank">${item.name}</a>
      <select>
        <option></option>
        <option>Need</option>
@@ -143,22 +163,42 @@ for (const boss in lootData) {
  container.appendChild(div);
 }
 
-function submitData(){
- const name=document.getElementById('playerName').value;
- if(!name){alert('Enter character name'); return;}
- const items=document.querySelectorAll('.item');
- let data=[];
- items.forEach(i=>{
+// Submit function
+async function submitData(){
+ const name=document.getElementById('playerName').value.trim();
+ if(!name){ alert('Enter character name'); return; }
+
+ const items=[];
+ document.querySelectorAll('.item').forEach(i=>{
    const itemName=i.querySelector('a').innerText;
    const status=i.querySelector('select').value;
-   if(status){ data.push({item:itemName,status}); }
+   if(status){ items.push({item:itemName, status}); }
  });
- const otherName=document.getElementById('otherItem').value;
+
+ const otherName=document.getElementById('otherItem').value.trim();
  const otherStatus=document.getElementById('otherStatus').value;
- if(otherName && otherStatus){ data.push({item:otherName,status:otherStatus}); }
- fetch('https://script.google.com/macros/s/AKfycby18UY1o2uvRgqLfV4HF9GfWx51XBdrKb9YpuVXm1LGT6Cbv1LQ8r4yGIt9VOk0rGlY1w/exec',{ method:'POST', body:JSON.stringify({name,items:data}) });
- alert('Submitted');
+ if(otherName && otherStatus){ items.push({item:otherName, status:otherStatus}); }
+
+ if(items.length === 0){ alert('Select at least one item status'); return; }
+
+ try{
+   await addDoc(collection(db, "submissions"), {
+     name: name,
+     items: items,
+     timestamp: Timestamp.now()
+   });
+   alert("Submitted successfully!");
+   // Reset form
+   document.getElementById('playerName').value='';
+   document.getElementById('otherItem').value='';
+   document.getElementById('otherStatus').value='';
+   document.querySelectorAll('.item select').forEach(s=>s.value='');
+ } catch(e){
+   console.error("Submission error:", e);
+   alert("Failed to submit.");
+ }
 }
 </script>
+
 </body>
 </html>
