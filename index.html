@@ -37,6 +37,7 @@ button { width:100%; padding:12px; background:#2e2605; color:#ffd100; border:1px
 <button onclick="submitData()">Submit</button>
 </div>
 
+<script>
 // Preloaded Karazhan Phase 1 BiS items per boss
 const lootData = {
 "Attumen the Huntsman": [
@@ -122,6 +123,7 @@ const lootData = {
 { id:28608, name:"Ironstriders of Urgency" }
 ]
 };
+
 const container = document.getElementById('loot');
 for (const boss in lootData) {
  const div = document.createElement('div');
